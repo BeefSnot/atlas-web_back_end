@@ -1,4 +1,3 @@
-class.js
 export default class HolbertonClass {
   constructor(size, location) {
     if (typeof size !== 'number') {
