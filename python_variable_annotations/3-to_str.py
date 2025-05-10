@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Module for type conversion operations.
-Contains a function that converts a floating point number to its string representation.
+Contains a function that converts a floating
+point number to its string representation.
 """
 
 
