@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-Task 4
 Module demonstrating variable annotations.
 Contains several variables with explicit type annotations.
 """
