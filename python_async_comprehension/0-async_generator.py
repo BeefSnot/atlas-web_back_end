@@ -5,13 +5,13 @@ Contains functionality for yielding random values with delays.
 """
 import asyncio
 from random import uniform
-from typing import AsyncGenerator
+from typing import Generator
 
 
-async def async_generator() -> AsyncGenerator[float, None]:
+async def async_generator() -> Generator[float, None, None]:
     """
     Creates an asynchronous generator that produces random values.
-    
+
     Yields a random float between 0 and 10 every second,
     for a total of 10 values.
     """
