@@ -12,10 +12,10 @@ async_generator = __import__('0-async_generator').async_generator
 async def async_comprehension() -> List[float]:
     """
     Collects random numbers using async comprehension syntax.
-    
+
     Uses an async generator to produce values and collects them
     into a list using Python's async comprehension feature.
-    
+
     Returns:
         A list containing 10 random float values
     """
