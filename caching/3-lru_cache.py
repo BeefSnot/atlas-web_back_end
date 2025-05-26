@@ -1,62 +1,48 @@
 #!/usr/bin/env python3
-"""
-First-In-First-Out (FIFO) caching module
-Implements a caching system that evicts the oldest entries first
-"""
+"""LRU caching system implementation"""
 
 from base_caching import BaseCaching
-from collections import OrderedDict
 
 
-class FIFOCache(BaseCaching):
-    """
-    FIFO Cache implementation that removes the oldest items when full.
-    Uses OrderedDict to maintain insertion order of cache entries.
-    """
+class LRUCache(BaseCaching):
+    """LRU Cache that discards least recently used items"""
 
     def __init__(self):
-        """Set up the FIFO cache structure"""
+        """Initialize cache system"""
         super().__init__()
-        # Use OrderedDict to track insertion order
-        self.cache_data = OrderedDict()
+        self.access_order = []  # Track access history
 
     def put(self, key, item):
-        """
-        Add or update an item in the cache using FIFO policy
-
-        Parameters:
-            key: The lookup key for the item
-            item: The value to store
-
-        If cache is full, removes the first item that was added
-        """
-        if key is None or item is None:
+        """Add item to cache with LRU replacement policy"""
+        if not key or not item:
             return
 
-        # Add the new item
+        # Update access history for existing keys
+        if key in self.access_order:
+            self.access_order.remove(key)
+        
+        # Append to track as most recently used
+        self.access_order.append(key)
+        
+        # Handle eviction if cache is full
+        if (len(self.cache_data) >= BaseCaching.MAX_ITEMS and 
+                key not in self.cache_data):
+            # Remove least recently used item (front of list)
+            lru = self.access_order.pop(0)
+            del self.cache_data[lru]
+            print(f"DISCARD: {lru}")
+            
+        # Store item
         self.cache_data[key] = item
 
-        # Check if we need to remove the oldest item
-        if len(self.cache_data) > self.MAX_ITEMS:
-            # Get first key (oldest item)
-            oldest_key, _ = next(iter(self.cache_data.items()))
-
-            # Remove it
-            self.cache_data.pop(oldest_key)
-            print(f"DISCARD: {oldest_key}")
-
     def get(self, key):
-        """
-        Retrieve an item from the cache
-
-        Parameters:
-            key: The key to look up
-
-        Returns:
-            The cached item or None if not found
-        """
-        if key is None:
+        """Retrieve item and update access history"""
+        if not key or key not in self.cache_data:
             return None
-
-        return self.cache_data.get(key)
+            
+        # Update access history
+        self.access_order.remove(key)
+        self.access_order.append(key)
+        
+        return self.cache_data[key]
     
