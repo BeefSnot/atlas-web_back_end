@@ -25,7 +25,7 @@ class MRUCache(BaseCaching):
         self.usage_list.append(key)
 
         # Handle cache overflow
-        if (key not in self.cache_data and 
+        if (key not in self.cache_data and
                 len(self.cache_data) >= self.MAX_ITEMS):
             # The most recently used item is the second-to-last in our list
             # (last is the current one we're adding)
