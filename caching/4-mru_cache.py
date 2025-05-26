@@ -46,3 +46,4 @@ class MRUCache(BaseCaching):
         self.usage_list.append(key)
         
         return self.cache_data[key]
+    
