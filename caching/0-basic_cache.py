@@ -49,4 +49,3 @@ class BasicCache(BaseCaching):
 
         # Fetch from cache dictionary
         return self.cache_data.get(key)
-    
