@@ -34,7 +34,8 @@ class LIFOCache(BaseCaching):
             return
 
         # Handle cache at capacity
-        if len(self.cache_data) >= self.MAX_ITEMS and key not in self.cache_data:
+        if (len(self.cache_data) >= self.MAX_ITEMS and
+                key not in self.cache_data):
             # Remove the most recently added item
             if self.most_recent:
                 evicted = self.most_recent
@@ -59,4 +60,3 @@ class LIFOCache(BaseCaching):
             return None
 
         return self.cache_data.get(key)
-    

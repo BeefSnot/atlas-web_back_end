@@ -20,18 +20,18 @@ class LRUCache(BaseCaching):
         # Update access history for existing keys
         if key in self.access_order:
             self.access_order.remove(key)
-        
+
         # Append to track as most recently used
         self.access_order.append(key)
-        
+
         # Handle eviction if cache is full
-        if (len(self.cache_data) >= BaseCaching.MAX_ITEMS and 
+        if (len(self.cache_data) >= BaseCaching.MAX_ITEMS and
                 key not in self.cache_data):
             # Remove least recently used item (front of list)
             lru = self.access_order.pop(0)
             del self.cache_data[lru]
             print(f"DISCARD: {lru}")
-            
+
         # Store item
         self.cache_data[key] = item
 
@@ -39,10 +39,9 @@ class LRUCache(BaseCaching):
         """Retrieve item and update access history"""
         if not key or key not in self.cache_data:
             return None
-            
+
         # Update access history
         self.access_order.remove(key)
         self.access_order.append(key)
-        
+
         return self.cache_data[key]
-    
