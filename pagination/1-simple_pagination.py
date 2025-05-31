@@ -60,4 +60,3 @@ class Server:
             
         # Return the right chunk of data
         return data[start:end]
-    

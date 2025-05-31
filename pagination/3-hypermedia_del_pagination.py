@@ -53,7 +53,7 @@ class Server:
         # Default to beginning if no index given
         if index is None:
             index = 0
-            
+        
         # Make sure the index makes sense
         assert index >= 0 and index < len(data_dict)
         
@@ -68,7 +68,7 @@ class Server:
                 results.append(data_dict[next_idx])
                 counter += 1
             next_idx += 1
-            
+        
         # Package everything up
         return {
             'index': index,
@@ -76,4 +76,3 @@ class Server:
             'page_size': len(results),
             'next_index': next_idx
         }
-    
