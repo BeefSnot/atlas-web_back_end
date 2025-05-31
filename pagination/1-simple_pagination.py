@@ -11,7 +11,7 @@ def index_range(page: int, page_size: int) -> Tuple[int, int]:
     # Basic pagination math - convert from 1-indexed pages to 0-indexed slices
     start = (page - 1) * page_size
     end = start + page_size
-    
+
     return (start, end)
 
 
@@ -47,16 +47,16 @@ class Server:
         # Sanity checks - make sure inputs are reasonable
         assert isinstance(page, int) and page > 0
         assert isinstance(page_size, int) and page_size > 0
-        
+
         # Calculate slice indexes
         start, end = index_range(page, page_size)
-        
+
         # Get our data
         data = self.dataset()
-        
+
         # Handle out-of-range requests gracefully
         if start >= len(data):
             return []  # empty for non-existent pages
-            
+
         # Return the right chunk of data
         return data[start:end]
