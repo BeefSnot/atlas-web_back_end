@@ -49,18 +49,18 @@ class Server:
         """
         # Get the indexed data
         data_dict = self.indexed_dataset()
-        
+
         # Default to beginning if no index given
         if index is None:
             index = 0
-        
+
         # Make sure the index makes sense
         assert index >= 0 and index < len(data_dict)
-        
+
         results = []
         next_idx = index
         counter = 0
-        
+
         # Keep going until we have enough items or run out
         while counter < page_size and next_idx < len(self.dataset()):
             # Skip over deleted entries
@@ -68,7 +68,7 @@ class Server:
                 results.append(data_dict[next_idx])
                 counter += 1
             next_idx += 1
-        
+
         # Package everything up
         return {
             'index': index,
