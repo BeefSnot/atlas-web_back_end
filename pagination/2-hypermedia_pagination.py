@@ -38,7 +38,7 @@ class Server:
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
         """
         Get a specific page of data
-        
+
         page: which page to fetch (starts at 1)
         page_size: how many items per page
         """
@@ -62,7 +62,7 @@ class Server:
     def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict:
         """
         Get page with navigation metadata (HATEOAS-style)
-        
+
         Returns dict with:
         - page_size: actual size of returned page
         - page: current page number
