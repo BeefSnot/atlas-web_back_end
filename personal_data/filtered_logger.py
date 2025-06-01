@@ -84,16 +84,16 @@ def main():
     logger = get_logger()
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    
+
     # Query all user data
     cursor.execute("SELECT * FROM users;")
-    
+
     # Process and log each row with filtered fields
     for row in cursor:
         # Format the row as a semicolon-separated string
         message = '; '.join(f"{k}={v}" for k, v in row.items())
         logger.info(message)
-    
+
     cursor.close()
     db.close()
 
