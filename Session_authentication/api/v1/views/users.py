@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-View module for Users API endpoints
+View module for User API endpoints
 """
 from api.v1.views import app_views
-from flask import jsonify, abort, request
+from flask import abort, jsonify, request
 from models.user import User
 
 
@@ -11,7 +11,7 @@ from models.user import User
 def view_all_users() -> str:
     """GET /api/v1/users
     Return:
-      - list of all User objects JSON represented
+      - List of all User objects JSON represented
     """
     all_users = [user.to_json() for user in User.all()]
     return jsonify(all_users)
@@ -21,7 +21,7 @@ def view_all_users() -> str:
 def view_one_user(user_id: str = None) -> str:
     """GET /api/v1/users/:id
     Path parameter:
-      - User ID
+      - User ID or "me" to retrieve current user
     Return:
       - User object JSON represented
       - 404 if the User ID doesn't exist
@@ -48,7 +48,7 @@ def delete_user(user_id: str = None) -> str:
     Path parameter:
       - User ID
     Return:
-      - empty JSON is the User has been correctly deleted
+      - Empty JSON is the User has been correctly deleted
       - 404 if the User ID doesn't exist
     """
     if user_id is None:
