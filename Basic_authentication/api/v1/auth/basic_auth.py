@@ -11,7 +11,8 @@ from models.user import User
 class BasicAuth(Auth):
     """BasicAuth class that inherits from Auth"""
 
-    def extract_base64_authorization_header(self, authorization_header: str) -> str:
+    def extract_base64_authorization_header(
+            self, authorization_header: str) -> str:
         """
         Extracts the Base64 part from the Authorization header
         for Basic Authentication
@@ -81,8 +82,8 @@ class BasicAuth(Auth):
         credentials = decoded_base64_authorization_header.split(':', 1)
         return (credentials[0], credentials[1])
 
-    def user_object_from_credentials(self, user_email: str,
-                                    user_pwd: str) -> TypeVar('User'):
+    def user_object_from_credentials(
+            self, user_email: str, user_pwd: str) -> TypeVar('User'):
         """
         Returns the User instance based on email and password credentials
 
