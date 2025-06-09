@@ -1,0 +1,1 @@
+This is the README for my 0x0B_redis_basic project. 
