@@ -143,3 +143,56 @@ class Auth:
             pass
         
         return None
+
+    def get_reset_password_token(self, email: str) -> str:
+        """
+        Generate a reset password token for a user
+        
+        Args:
+            email (str): User's email
+            
+        Returns:
+            str: Reset token
+            
+        Raises:
+            ValueError: If no user with the given email exists
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            
+            reset_token = _generate_uuid()
+            
+            self._db.update_user(user.id, reset_token=reset_token)
+            
+            return reset_token
+        except NoResultFound:
+            raise ValueError("User does not exist")
+
+    def update_password(self, reset_token: str, password: str) -> None:
+        """
+        Update a user's password using a reset token
+    
+        Args:
+            reset_token (str): Reset token to find the user
+            password (str): New password to set
+        
+        Returns:
+            None
+        
+        Raises:
+            ValueError: If no user with the given reset token exists
+        """
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+        
+            hashed_password = _hash_password(password)
+        
+            self._db.update_user(
+                user.id, 
+                hashed_password=hashed_password,
+                reset_token=None
+            )
+        
+            return None
+        except NoResultFound:
+            raise ValueError("Invalid reset token")
