@@ -90,7 +90,7 @@ class DB:
 
         for key, value in kwargs.items():
             if not hasattr(user, key):
-                raise ValueError(f"Cannot update non-existent attribute: {key}")
+                raise ValueError(f"Can't update non-existent attribute: {key}")
             setattr(user, key, value)
 
         self._session.commit()
