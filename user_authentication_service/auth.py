@@ -18,8 +18,7 @@ def _hash_password(password: str) -> bytes:
     Returns:
         bytes: The salted hash of the input password
     """
-    # Generate a salt and hash the password
-    salt = bcrypt.gensalt()
+    salt = bcrypt.gensalt
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
     
     return hashed_password
@@ -48,13 +47,10 @@ class Auth:
         Raises:
             ValueError: If a user with the given email already exists
         """
-        # Check if user already exists
         try:
             self._db.find_user_by(email=email)
-            # If we get here, the user exists
             raise ValueError(f"User {email} already exists")
         except NoResultFound:
-            # User not found, so we can create a new one
             hashed_password = _hash_password(password)
             user = self._db.add_user(email, hashed_password)
             return user
