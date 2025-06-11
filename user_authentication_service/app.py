@@ -135,7 +135,6 @@ def get_reset_password_token():
             "reset_token": reset_token
         })
     except ValueError:
-        # Email not registered
         abort(403)
 
 
