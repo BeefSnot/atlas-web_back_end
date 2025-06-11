@@ -2,7 +2,7 @@
 """
 Flask app for user authentication service
 """
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort, make_response
 from auth import Auth
 
 
@@ -44,6 +44,39 @@ def users():
         return jsonify({
             "message": "email already registered"
         }), 400
+
+
+@app.route('/sessions', methods=['POST'])
+def login():
+    """
+    Login a user and create a new session
+    
+    Expects form data with 'email' and 'password' fields
+    
+    Returns:
+        JSON response with login status and sets session cookie
+    """
+    # Get email and password from form data
+    email = request.form.get('email')
+    password = request.form.get('password')
+    
+    # Validate login credentials
+    if not AUTH.valid_login(email, password):
+        abort(401)
+    
+    # Create session
+    session_id = AUTH.create_session(email)
+    
+    # Prepare response
+    response = make_response(jsonify({
+        "email": email,
+        "message": "logged in"
+    }))
+    
+    # Set session cookie
+    response.set_cookie('session_id', session_id)
+    
+    return response
 
 
 if __name__ == "__main__":
