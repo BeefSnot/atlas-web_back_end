@@ -11,7 +11,7 @@ Base = declarative_base()
 class User(Base):
     """
     User class for representing users in the database
-    
+
     Attributes:
         id (int): The primary key
         email (str): User's email (non-nullable)
