@@ -15,7 +15,7 @@ def _hash_password(password: str) -> bytes:
 
     Args:
         password (str): The password to hash
- 
+
     Returns:
         bytes: The salted hash of the input password
     """
@@ -73,13 +73,13 @@ class Auth:
         Args:
             email (str): User's email
             password (str): User's password
-  
+
         Returns:
             bool: True if credentials are valid, False otherwise
         """
         try:
             user = self._db.find_user_by(email=email)
-   
+
             return bcrypt.checkpw(
                 password.encode('utf-8'),
                 user.hashed_password
@@ -93,7 +93,7 @@ class Auth:
 
         Args:
             email (str): User's email
-  
+
         Returns:
             str: Session ID if user exists, None otherwise
         """
@@ -114,7 +114,7 @@ class Auth:
 
         Args:
             session_id (str): Session ID to look up
- 
+
         Returns:
             User: User object if found, None otherwise
         """
@@ -130,10 +130,10 @@ class Auth:
     def destroy_session(self, user_id: int) -> None:
         """
         Destroy a user's session by setting session_id to None
-   
+
         Args:
             user_id (int): ID of the user whose session to destroy
-          
+    
         Returns:
             None
         """
@@ -141,13 +141,13 @@ class Auth:
             self._db.update_user(user_id, session_id=None)
         except NoResultFound:
             pass
-    
+
         return None
 
     def get_reset_password_token(self, email: str) -> str:
         """
         Generate a reset password token for a user
-  
+
         Args:
             email (str): User's email
 
