@@ -51,6 +51,33 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
+def replay(fn: Callable) -> None:
+    """
+    Display the history of calls of a particular function
+    
+    Args:
+        fn: The function to replay
+    """
+    redis_instance = redis.Redis()
+    fn_name = fn.__qualname__
+    
+    call_count = redis_instance.get(fn_name)
+    if call_count is None:
+        call_count = 0
+    else:
+        call_count = int(call_count.decode('utf-8'))
+    
+    print(f"{fn_name} was called {call_count} times:")
+    
+    inputs = redis_instance.lrange(f"{fn_name}:inputs", 0, -1)
+    outputs = redis_instance.lrange(f"{fn_name}:outputs", 0, -1)
+    
+    for input_data, output_data in zip(inputs, outputs):
+        input_str = input_data.decode('utf-8')
+        output_str = output_data.decode('utf-8')
+        print(f"{fn_name}(*{input_str}) -> {output_str}")
+
+
 class Cache:
     """
     Redis-based caching class that provides storage functionality
