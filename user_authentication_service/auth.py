@@ -133,7 +133,7 @@ class Auth:
 
         Args:
             user_id (int): ID of the user whose session to destroy
-    
+
         Returns:
             None
         """
@@ -188,7 +188,7 @@ class Auth:
             hashed_password = _hash_password(password)
 
             self._db.update_user(
-                user.id, 
+                user.id,
                 hashed_password=hashed_password,
                 reset_token=None
             )
