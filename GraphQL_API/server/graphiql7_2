@@ -1,0 +1,11 @@
+mutation {
+  addTask(title: "New Task", weight: 1, description: "This is a new task for testing mutations", projectId: "PROJECT_ID_HERE") {
+    id
+    title
+    weight
+    description
+    project {
+      title
+    }
+  }
+}
