@@ -1,0 +1,1 @@
+This is my README for atlas-atlas-files_manager project!
