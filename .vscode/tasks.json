@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Quick cache smoke tests",
+			"type": "shell",
+			"command": "python - << 'PY'\nfrom caching.base_caching import BaseCaching\nfrom caching import base_caching\nfrom caching import _\nPY",
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Python version check",
+			"type": "shell",
+			"command": "python -c \"import sys; print(sys.version)\"",
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
