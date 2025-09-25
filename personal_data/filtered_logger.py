@@ -14,6 +14,12 @@ import os
 import re
 from typing import List
 
+try:
+    from mysql.connector.connection import MySQLConnection
+except Exception:
+    class MySQLConnection:
+        pass
+
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
@@ -74,7 +80,7 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db():
+def get_db() -> MySQLConnection:
     """Return a MySQL DB connection using env vars.
 
     Env vars used:
