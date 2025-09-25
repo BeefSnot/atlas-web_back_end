@@ -18,13 +18,22 @@ from typing import List, Tuple
 PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
 
 
-def filter_datum(fields: List[str], redaction: str, message: str, separator: str) -> str:
+def filter_datum(
+    fields: List[str],
+    redaction: str,
+    message: str,
+    separator: str,
+) -> str:
     """Return the log message with specified fields redacted.
 
     Each key=value pair separated by `separator` will have value replaced by
     `redaction` if key is in `fields`.
     """
-    pattern = r"(" + "|".join(re.escape(f) for f in fields) + r")=([^" + re.escape(separator) + r"]*)"
+    pattern = (
+        r"(" + "|".join(re.escape(f) for f in fields) + r")=([^"
+        + re.escape(separator)
+        + r"]*)"
+    )
     return re.sub(pattern, lambda m: f"{m.group(1)}={redaction}", message)
 
 
@@ -32,7 +41,9 @@ class RedactingFormatter(logging.Formatter):
     """Formatter that redacts PII fields from log records."""
 
     REDACTION = "***"
-    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    FORMAT = (
+        "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    )
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]) -> None:
@@ -40,7 +51,10 @@ class RedactingFormatter(logging.Formatter):
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:  # type: ignore[override]
-        record.msg = filter_datum(self.fields, self.REDACTION, str(record.getMessage()), self.SEPARATOR)
+        msg_str = str(record.getMessage())
+        record.msg = filter_datum(
+            self.fields, self.REDACTION, msg_str, self.SEPARATOR
+        )
         return super().format(record)
 
 
@@ -91,11 +105,19 @@ def main() -> None:
 
     cursor = db.cursor()
     cursor.execute(
-        "SELECT name, email, phone, ssn, password, ip, last_login, user_agent FROM users;"
+        (
+            "SELECT name, email, phone, ssn, password, "
+            "ip, last_login, user_agent FROM users;"
+        )
     )
-    fields = ("name", "email", "phone", "ssn", "password", "ip", "last_login", "user_agent")
+    fields = (
+        "name", "email", "phone", "ssn", "password",
+        "ip", "last_login", "user_agent",
+    )
     for row in cursor:
-        message = "; ".join(f"{k}={v}" for k, v in zip(fields, row)) + ";"
+        message = "; ".join(
+            f"{k}={v}" for k, v in zip(fields, row)
+        ) + ";"
         logger.info(message)
 
     cursor.close()
