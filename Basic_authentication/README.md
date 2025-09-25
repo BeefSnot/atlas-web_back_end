@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Basic_authentication
 
 This directory contains the implementation and supporting files for a simple Basic Authentication system for a Flask-based API. The goal is to demonstrate and learn the authentication process step by step, including Base64 encoding, HTTP Authorization headers, and user validation.
@@ -19,3 +20,6 @@ This directory contains the implementation and supporting files for a simple Bas
 
 ## Usage
 This directory is intended to be used as part of the `atlas-web_back_end` project. Please refer to the main project documentation for setup and usage instructions.
+=======
+This is README for Basic_Authentication
+>>>>>>> fb4997942433ff5d5191b7fd84256c4b7c006fa5
