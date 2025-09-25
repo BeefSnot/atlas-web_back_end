@@ -6,7 +6,7 @@ do not miss items when rows have been removed between requests.
 """
 
 import csv
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 
 class Server:
@@ -40,7 +40,7 @@ class Server:
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: Optional[int] = None,
+    def get_hyper_index(self, index: int = None,
                         page_size: int = 10) -> Dict:
         """Return a page of data resilient to deletions.
 
