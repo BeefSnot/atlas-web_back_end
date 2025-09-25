@@ -14,6 +14,12 @@ def status() -> str:
     return jsonify({"status": "OK"})
 
 
+@app_views.route('/status/', methods=['GET'], strict_slashes=False)
+def status():
+    """Status endpoint."""
+    return jsonify({"status": "OK"})
+
+
 @app_views.route('/stats/', strict_slashes=False)
 def stats() -> str:
     """ GET /api/v1/stats
