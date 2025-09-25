@@ -20,10 +20,10 @@ PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
 
 def filter_datum(
     fields: List[str],
-    redaction: str,
-    message: str,
-    separator: str,
-) -> str:
+    redaction,
+    message,
+    separator,
+):
     """Return the log message with specified fields redacted.
 
     Each key=value pair separated by `separator` will have value replaced by
