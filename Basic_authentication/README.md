@@ -1,25 +1,42 @@
-<<<<<<< HEAD
-# Basic_authentication
+# Simple API
 
-This directory contains the implementation and supporting files for a simple Basic Authentication system for a Flask-based API. The goal is to demonstrate and learn the authentication process step by step, including Base64 encoding, HTTP Authorization headers, and user validation.
+Simple HTTP API for playing with `User` model.
 
-## Contents
-- `README.md`: Project overview and instructions
 
-## Learning Objectives
-- Understand what authentication means
-- Learn about Base64 encoding and decoding
-- Understand Basic Authentication and how to implement it
-- Learn how to send and process the Authorization header in HTTP requests
+## Files
 
-## Requirements
-- Python 3.9
-- Flask
-- All files must be executable and follow pycodestyle (version 2.5)
-- Each module, class, and function must have a meaningful docstring
+### `models/`
 
-## Usage
-This directory is intended to be used as part of the `atlas-web_back_end` project. Please refer to the main project documentation for setup and usage instructions.
-=======
-This is README for Basic_Authentication
->>>>>>> fb4997942433ff5d5191b7fd84256c4b7c006fa5
+- `base.py`: base of all models of the API - handle serialization to file
+- `user.py`: user model
+
+### `api/v1`
+
+- `app.py`: entry point of the API
+- `views/index.py`: basic endpoints of the API: `/status` and `/stats`
+- `views/users.py`: all users endpoints
+
+
+## Setup
+
+```
+$ pip3 install -r requirements.txt
+```
+
+
+## Run
+
+```
+$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
+```
+
+
+## Routes
+
+- `GET /api/v1/status`: returns the status of the API
+- `GET /api/v1/stats`: returns some stats of the API
+- `GET /api/v1/users`: returns the list of users
+- `GET /api/v1/users/:id`: returns an user based on the ID
+- `DELETE /api/v1/users/:id`: deletes an user based on the ID
+- `POST /api/v1/users`: creates a new user (JSON parameters: `email`, `password`, `last_name` (optional) and `first_name` (optional))
+- `PUT /api/v1/users/:id`: updates an user based on the ID (JSON parameters: `last_name` and `first_name`)
