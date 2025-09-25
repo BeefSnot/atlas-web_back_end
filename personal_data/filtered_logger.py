@@ -12,10 +12,10 @@ Implements:
 import logging
 import os
 import re
-from typing import List, Tuple
+from typing import List
 
 
-PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 
 def filter_datum(
@@ -46,11 +46,11 @@ class RedactingFormatter(logging.Formatter):
     )
     SEPARATOR = ";"
 
-    def __init__(self, fields: List[str]) -> None:
+    def __init__(self, fields) -> None:
         super().__init__(self.FORMAT)
         self.fields = fields
 
-    def format(self, record: logging.LogRecord) -> str:  # type: ignore[override]
+    def format(self, record):
         msg_str = str(record.getMessage())
         record.msg = filter_datum(
             self.fields, self.REDACTION, msg_str, self.SEPARATOR
@@ -95,7 +95,7 @@ def get_db():
     )
 
 
-def main() -> None:
+def main():
     """Obtain a DB connection and log all rows from the users table."""
     logger = get_logger()
     try:
