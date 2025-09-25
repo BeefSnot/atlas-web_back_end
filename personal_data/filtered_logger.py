@@ -1,126 +1,107 @@
 #!/usr/bin/env python3
-"""filtered_logger module.
+"""Personal data logging with PII redaction.
 
-Provides helpers to safely log records while redacting PII fields,
-connect to a MySQL database from environment variables, and dump
-user rows with redacted fields.
+Implements:
+- filter_datum: redact selected fields in log messages
+- RedactingFormatter: logging.Formatter that applies filter_datum
+- get_logger: preconfigured logger using RedactingFormatter
+- get_db: connect to MySQL using env vars
+- main: read users table and log rows with redaction
 """
+
 from __future__ import annotations
 
 import logging
 import os
 import re
-from typing import Iterable, Tuple
-
-import mysql.connector
-from mysql.connector.connection import MySQLConnection
+from typing import List, Tuple
 
 
-PII_FIELDS: Tuple[str, ...] = (
-    "name",
-    "email",
-    "phone",
-    "ssn",
-    "password",
-)
+PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
 
 
-def filter_datum(fields: Iterable[str], redaction: str,
-                  message: str, separator: str) -> str:
-    """Obfuscate values of specified fields in a log line.
+def filter_datum(fields: List[str], redaction: str, message: str, separator: str) -> str:
+    """Return the log message with specified fields redacted.
 
-    Uses a single regex substitution to replace any value appearing after
-    "field=" up to the next separator with the provided redaction string.
+    Each key=value pair separated by `separator` will have value replaced by
+    `redaction` if key is in `fields`.
     """
-    pattern = (r"(?P<field>" + "|".join(map(re.escape, fields)) + r")="
-               r"[^" + re.escape(separator) + r"]*")
-    return re.sub(pattern,
-                  lambda m: f"{m.group('field')}={redaction}",
-                  message)
+    pattern = r"(" + "|".join(re.escape(f) for f in fields) + r")=([^" + re.escape(separator) + r"]*)"
+    return re.sub(pattern, lambda m: f"{m.group(1)}={redaction}", message)
 
 
 class RedactingFormatter(logging.Formatter):
-    """Redacting Formatter class that masks PII fields in messages."""
+    """Formatter that redacts PII fields from log records."""
 
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields: Iterable[str]):
-        """Initialize formatter with fields to redact."""
+    def __init__(self, fields: List[str]) -> None:
         super().__init__(self.FORMAT)
-        self.fields = tuple(fields)
+        self.fields = fields
 
-    def format(self, record: logging.LogRecord) -> str:
-        """Format the log record with PII redacted."""
-        record.msg = filter_datum(self.fields, self.REDACTION,
-                                  record.getMessage(), self.SEPARATOR)
+    def format(self, record: logging.LogRecord) -> str:  # type: ignore[override]
+        record.msg = filter_datum(self.fields, self.REDACTION, str(record.getMessage()), self.SEPARATOR)
         return super().format(record)
 
 
 def get_logger() -> logging.Logger:
-    """Create and configure a logger for user data with redaction.
-
-    Returns a logger named "user_data" at INFO level, with a single
-    StreamHandler using RedactingFormatter parameterized by PII_FIELDS.
-    """
+    """Create and return a logger configured for user data."""
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
     logger.propagate = False
 
-    if not logger.handlers:
-        handler = logging.StreamHandler()
-        handler.setFormatter(RedactingFormatter(fields=PII_FIELDS))
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.INFO)
+    handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
+
+    if not any(isinstance(h, logging.StreamHandler) for h in logger.handlers):
         logger.addHandler(handler)
 
     return logger
 
 
-def get_db() -> MySQLConnection:
-    """Create a connection to the MySQL database using env variables.
+def get_db():
+    """Return a MySQL DB connection using env vars.
 
-    Env variables (with defaults):
-      - PERSONAL_DATA_DB_USERNAME (default: "root")
-      - PERSONAL_DATA_DB_PASSWORD (default: "")
-      - PERSONAL_DATA_DB_HOST (default: "localhost")
-      - PERSONAL_DATA_DB_NAME (no default; required)
+    Env vars used:
+    - PERSONAL_DATA_DB_USERNAME (default: "root")
+    - PERSONAL_DATA_DB_PASSWORD (default: "")
+    - PERSONAL_DATA_DB_HOST (default: "localhost")
+    - PERSONAL_DATA_DB_NAME (required)
     """
+    import mysql.connector
+
     username = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
     password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
     host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
-    db_name = os.getenv("PERSONAL_DATA_DB_NAME")
+    database = os.getenv("PERSONAL_DATA_DB_NAME")
 
     return mysql.connector.connect(
-        user=username,
-        password=password,
-        host=host,
-        database=db_name,
+        user=username, password=password, host=host, database=database
     )
 
 
 def main() -> None:
-    """Obtain DB connection and log all users with redacted PII fields."""
-    fields = (
-        "name", "email", "phone", "ssn", "password",
-        "ip", "last_login", "user_agent",
-    )
-    query = (
-        "SELECT name, email, phone, ssn, password, ip, last_login, user_agent"
-        " FROM users;"
-    )
-
+    """Obtain a DB connection and log all rows from the users table."""
     logger = get_logger()
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute(query)
-
     try:
-        for row in cur:
-            message = "; ".join(f"{k}={v}" for k, v in zip(fields, row)) + ";"
-            logger.info(message)
-    finally:
-        cur.close()
-        conn.close()
+        db = get_db()
+    except Exception:
+        return
+
+    cursor = db.cursor()
+    cursor.execute(
+        "SELECT name, email, phone, ssn, password, ip, last_login, user_agent FROM users;"
+    )
+    fields = ("name", "email", "phone", "ssn", "password", "ip", "last_login", "user_agent")
+    for row in cursor:
+        message = "; ".join(f"{k}={v}" for k, v in zip(fields, row)) + ";"
+        logger.info(message)
+
+    cursor.close()
+    db.close()
 
 
 if __name__ == "__main__":
